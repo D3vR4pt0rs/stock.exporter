@@ -13,6 +13,8 @@ import (
 	"exporter/internal/interfaces/handlers"
 	"exporter/internal/usecases/collector"
 
+	"github.com/D3vR4pt0rs/logger"
+
 	"github.com/gorilla/mux"
 )
 
@@ -40,14 +42,14 @@ func main() {
 		fmt.Println("Received a shutdown signal:", <-listener)
 
 		if err := srv.Shutdown(context.Background()); err != nil && err != http.ErrServerClosed {
-			fmt.Println("Failed to gracefully shutdown ", err)
+			logger.Error.Println("Failed to gracefully shutdown ", err)
 		}
 	}()
 
-	fmt.Println("[*]  Listening...")
+	logger.Info.Println("[*]  Listening...")
 	if err := srv.ListenAndServe(); err != nil {
-		fmt.Println("Failed to listen and serve ", err)
+		logger.Error.Println("Failed to listen and serve ", err)
 	}
 
-	fmt.Println("Server shutdown")
+	logger.Critical.Println("Server shutdown")
 }

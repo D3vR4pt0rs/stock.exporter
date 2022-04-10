@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"exporter/internal/entities"
+	"github.com/D3vR4pt0rs/logger"
 )
 
 type client struct {
@@ -46,15 +47,17 @@ type Ticker struct {
 
 func (c client) GetStockInformationByTicker(ticker string) ([]entities.Stock, error) {
 	url := fmt.Sprintf("%s/v2/aggs/ticker/%s/range/5/minute/2022-04-08/2022-04-08?adjusted=true&sort=asc", POLYGON_URL, ticker)
-	fmt.Println(url)
+
 	request, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
+		logger.Error.Println(err.Error())
 		return []entities.Stock{}, err
 	}
 	request.Header.Add("Authorization", fmt.Sprintf("Bearer %s", c.token))
 
 	resp, err := c.httpClient.Do(request)
 	if err != nil {
+		logger.Error.Println(err.Error())
 		return []entities.Stock{}, err
 	}
 

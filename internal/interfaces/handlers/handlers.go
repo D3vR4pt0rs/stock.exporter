@@ -6,6 +6,8 @@ import (
 	"net/http"
 
 	"exporter/internal/usecases/collector"
+	"github.com/D3vR4pt0rs/logger"
+
 	"github.com/gorilla/mux"
 )
 
@@ -15,7 +17,7 @@ const (
 
 func getStockInformationByTicker(app collector.Controller) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Printf("Got new request to get stock information by %s\n", mux.Vars(r)[ticker])
+		logger.Info.Printf("Got new request to get stock information by %s\n", mux.Vars(r)[ticker])
 		errorMessage := "Error getting ticker"
 		ticker := mux.Vars(r)[ticker]
 		result, err := app.GetStockInformationByTicker(ticker)
@@ -36,7 +38,7 @@ func getStockInformationByTicker(app collector.Controller) http.Handler {
 
 func getAvailableCompanies(app collector.Controller) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Printf("Got new request to get available companies")
+		logger.Info.Printf("Got new request to get available companies")
 		result := app.GetAvailableCompanies()
 		w.Header().Set("Content-Type", "application/json")
 		resp := make(map[string]interface{})
