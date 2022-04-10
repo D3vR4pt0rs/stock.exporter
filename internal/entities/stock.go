@@ -11,3 +11,8 @@ type Stock struct {
 	Close  float64   `json:"close"`
 	Volume int       `json:"volume"`
 }
+
+type Company struct {
+	Name   string `json:"name"`
+	Ticker string `json:"ticker"`
+}
