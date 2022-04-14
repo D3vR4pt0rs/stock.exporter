@@ -45,20 +45,20 @@ type Ticker struct {
 	AveragePriceOfVolume float64 `json:"vw"`
 }
 
-func (c client) GetStockInformationByTicker(ticker string) ([]entities.Stock, error) {
+func (c client) GetInformationForCandle(ticker string) ([]entities.CandlestickData, error) {
 	url := fmt.Sprintf("%s/v2/aggs/ticker/%s/range/5/minute/2022-04-08/2022-04-08?adjusted=true&sort=asc", POLYGON_URL, ticker)
 
 	request, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		logger.Error.Println(err.Error())
-		return []entities.Stock{}, err
+		return []entities.CandlestickData{}, err
 	}
 	request.Header.Add("Authorization", fmt.Sprintf("Bearer %s", c.token))
 
 	resp, err := c.httpClient.Do(request)
 	if err != nil {
 		logger.Error.Println(err.Error())
-		return []entities.Stock{}, err
+		return []entities.CandlestickData{}, err
 	}
 
 	defer resp.Body.Close()
@@ -66,10 +66,10 @@ func (c client) GetStockInformationByTicker(ticker string) ([]entities.Stock, er
 	var result AggregateResponse
 	json.NewDecoder(resp.Body).Decode(&result)
 
-	var stockInformations []entities.Stock
+	var stockInformations []entities.CandlestickData
 	for _, rawStock := range result.Results {
 		tUnixNanoRemainder := (rawStock.Timestamp % int64(time.Microsecond)) * int64(time.Millisecond)
-		stock := entities.Stock{
+		stock := entities.CandlestickData{
 			Ticker: result.Ticker,
 			Open:   rawStock.Open,
 			Close:  rawStock.Close,

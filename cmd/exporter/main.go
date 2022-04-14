@@ -8,7 +8,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	"exporter/internal/infrastructure/polygon"
+	"exporter/internal/infrastructure/finnhub"
 	"exporter/internal/interfaces/client"
 	"exporter/internal/interfaces/handlers"
 	"exporter/internal/usecases/collector"
@@ -20,19 +20,20 @@ import (
 
 const (
 	polygonApiKey = "POLYGON_API_KEY"
+	finnhubApiKey = "FINNHUB_API_KEY"
 )
 
 func main() {
-	token := os.Getenv(polygonApiKey)
+	token := os.Getenv(finnhubApiKey)
 
-	polygonClient := polygon.New(token)
-	apiClient := client.New(polygonClient)
+	finnhubClient := finnhub.New(token)
+	apiClient := client.New(finnhubClient)
 	application := collector.New(apiClient)
 
 	router := mux.NewRouter()
 	handlers.Make(router, application)
 	srv := &http.Server{
-		Addr:    ":5000",
+		Addr:    ":6000",
 		Handler: router,
 	}
 

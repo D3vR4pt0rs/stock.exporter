@@ -18,12 +18,12 @@ const (
 func getStockInformationByTicker(app collector.Controller) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		logger.Info.Printf("Got new request to get stock information by %s\n", mux.Vars(r)[ticker])
-		errorMessage := "Error getting ticker"
+
 		ticker := mux.Vars(r)[ticker]
-		result, err := app.GetStockInformationByTicker(ticker)
+		result, err := app.GetInformationAboutStock(ticker)
 		if err != nil {
 			fmt.Println(err.Error())
-			http.Error(w, errorMessage, http.StatusInternalServerError)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 

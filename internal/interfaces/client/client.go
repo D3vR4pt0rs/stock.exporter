@@ -1,21 +1,53 @@
 package client
 
-import "exporter/internal/entities"
+import (
+	"exporter/internal/entities"
+)
 
-type stockApiInteractor interface {
-	GetStockInformationByTicker(ticker string) ([]entities.Stock, error)
+var availableTickers = map[string]string{
+	"Apple":     "AAPL",
+	"Microsoft": "MSFT",
+	"IBM":       "IBM",
+	"Tesla":     "TSLA",
+	"Google":    "GOOGL",
+}
+
+type StockClient interface {
+	GetQuoteStock(ticker string) (entities.Stock, error)
+	OpenWebSocketConnection(symbols []string)
 }
 
 type stockApiClient struct {
-	saInteractor stockApiInteractor
+	stockClient StockClient
 }
 
-func New(saInteractor stockApiInteractor) *stockApiClient {
+func New(stockClient StockClient) *stockApiClient {
+	// go stockClient.OpenWebSocketConnection(getTickers())
 	return &stockApiClient{
-		saInteractor: saInteractor,
+		stockClient: stockClient,
 	}
 }
 
-func (saClient stockApiClient) GetStockInformationByTicker(ticker string) ([]entities.Stock, error) {
-	return saClient.saInteractor.GetStockInformationByTicker(ticker)
+func getTickers() []string {
+	var tickers []string
+	for _, value := range availableTickers {
+		tickers = append(tickers, value)
+	}
+	return tickers
+}
+
+func (saClient stockApiClient) GetAvailableCompanies() []entities.Company {
+	var companies []entities.Company
+	for key, value := range availableTickers {
+		company := entities.Company{
+			Name:   key,
+			Ticker: value,
+		}
+		companies = append(companies, company)
+	}
+	return companies
+}
+
+func (saClient stockApiClient) GetInformationAboutStock(ticker string) (entities.Stock, error) {
+	return saClient.stockClient.GetQuoteStock(ticker)
 }

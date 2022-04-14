@@ -9,5 +9,5 @@ RUN go build cmd/exporter/main.go
 FROM golang:alpine
 WORKDIR /app/cmd/exporter
 COPY --from=builder /app/exporter/main .
-EXPOSE 5000
+EXPOSE 6000
 CMD ["./main"]
