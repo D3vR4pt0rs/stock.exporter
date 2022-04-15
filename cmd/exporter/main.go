@@ -16,6 +16,7 @@ import (
 	"github.com/D3vR4pt0rs/logger"
 
 	"github.com/gorilla/mux"
+	"github.com/rs/cors"
 )
 
 const (
@@ -32,9 +33,15 @@ func main() {
 
 	router := mux.NewRouter()
 	handlers.Make(router, application)
+
+	c := cors.New(cors.Options{
+		AllowedOrigins: []string{"*"},   // All origins
+		AllowedMethods: []string{"GET"}, // Allowing only get, just an example
+	})
+
 	srv := &http.Server{
-		Addr:    ":6000",
-		Handler: router,
+		Addr:    ":1338",
+		Handler: c.Handler(router),
 	}
 
 	go func() {
